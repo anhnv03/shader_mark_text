@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_shader_mark_text/provider/leb_banner_provider.dart';
 import 'package:test_shader_mark_text/utils/size_helper.dart';
-import 'package:test_shader_mark_text/widget/banner_leb/dot_style.dart';
-import 'package:test_shader_mark_text/widget/shader_text/shader_text.dart';
+import 'package:test_shader_mark_text/widget/shader_text/animated_shader_mark_text.dart';
 import 'package:test_shader_mark_text/widget/shader_text/shader_text_props.dart';
 
 class BannerSection extends StatelessWidget {
@@ -33,30 +32,26 @@ class BannerSection extends StatelessWidget {
               //     ),
               //   ),
               // ),
-              child: ShaderText(
+              child: AnimatedShaderMarkText(
                 data: ledBannerProvider.textContent,
-                textProps: const TextProps(
-                  style: TextStyle(
-                    fontSize: 100,
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
-                  ),
+                animationProps: TextAnimationProps(
+                  direction: ledBannerProvider.selectedTextRunDirection,
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.linear,
+                  repeat: true,
+                ),
+                textProps: TextProps(
+                  style: ledBannerProvider.textStyleContent,
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                ),
-                animationProps: TextAnimationProps(
-                  direction: ledBannerProvider.selectedTextRunDirection,
-                  duration: const Duration(seconds: 5),
-                  curve: Curves.linear,
-                  repeat: true,
                 ),
                 bannerProps: BannerLebProps(
                   ledSize: 4,
                   ledSpacing: 0,
                   ledColor: Colors.red,
                   backgroundColor: Colors.black,
-                  dotStyle: DotStyle.circle,
+                  dotStyle: ledBannerProvider.selectedTextShape,
                   width: context.width,
                   height: bannerHeight,
                 ),
