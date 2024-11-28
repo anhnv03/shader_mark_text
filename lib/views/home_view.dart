@@ -9,12 +9,12 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        body: ChangeNotifierProvider(
-          create: (context) => LebBannerProvider(),
-          child: const Column(
+    return ChangeNotifierProvider(
+      create: (context) => LebBannerProvider(),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: const Scaffold(
+          body: Column(
             children: [
               BannerSection(),
               ControlSection(),

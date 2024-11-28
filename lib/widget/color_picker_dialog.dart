@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-void _showColorPickerDialog(
+void showColorPickerDialog(
   BuildContext context, {
   required String title,
   required Color initialColor,

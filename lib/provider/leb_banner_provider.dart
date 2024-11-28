@@ -5,6 +5,7 @@ import 'package:test_shader_mark_text/widget/banner_leb/dot_style.dart';
 import 'package:test_shader_mark_text/widget/shader_text/text_run_direction.dart';
 
 class LebBannerProvider extends ChangeNotifier {
+  //ToDo: ===================== define variable =======================
   bool _isHorizontalView = false;
   String _textContent = "Hello";
 
@@ -15,9 +16,21 @@ class LebBannerProvider extends ChangeNotifier {
   TextRunDirection _selectedTextRunDirection = TextRunDirection.none;
   TextRunDirection get selectedTextRunDirection => _selectedTextRunDirection;
 
+  int _selectedSpeedAnimation = 2;
+  int get selectedSpeedAnimation => _selectedSpeedAnimation;
+
   //Text shape
   DotStyle _selectedTextShape = DotStyle.none;
   DotStyle get selectedTextShape => _selectedTextShape;
+
+  double _selectedLebSize = 2;
+  double get selectedLedSize => _selectedLebSize;
+
+  double _selectedLebSpacing = 0;
+  double get selectedLebSpacing => _selectedLebSpacing;
+
+  Color _selectedLebColor = Colors.red;
+  Color get selectedLebColor => _selectedLebColor;
 
   //text style
   TextStyle _textStyle = TextStyle(
@@ -40,6 +53,11 @@ class LebBannerProvider extends ChangeNotifier {
   bool _activeBold = true;
   bool get activeBold => _activeBold;
 
+  // background banner
+  Color _selectedbannerBackgroundColor = Colors.black;
+  Color get selectedBannerBackgroundColor => _selectedbannerBackgroundColor;
+
+  //ToDo: ========================= action logic =========================
   void toggleView() {
     _isHorizontalView = !_isHorizontalView;
     notifyListeners();
@@ -60,8 +78,28 @@ class LebBannerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateSpeedAnimation(int speed) {
+    _selectedSpeedAnimation = speed;
+    notifyListeners();
+  }
+
   void updateTextShape(DotStyle textShape) {
     _selectedTextShape = textShape;
+    notifyListeners();
+  }
+
+  void updateLebSize(double size) {
+    _selectedLebSize = size;
+    notifyListeners();
+  }
+
+  void updateLebSpacing(double spacing) {
+    _selectedLebSpacing = spacing;
+    notifyListeners();
+  }
+
+  void updateLebColor(Color color) {
+    _selectedLebColor = color;
     notifyListeners();
   }
 
@@ -72,7 +110,11 @@ class LebBannerProvider extends ChangeNotifier {
 
   void updateFontFamily(String fontFamily) {
     _selectFontFamily = fontFamily;
-    _textStyle = _textStyle.copyWith(fontFamily: fontFamily);
+    _textStyle = GoogleFonts.getFont(fontFamily).copyWith(
+      fontSize: _selectedTextSize,
+      fontWeight: _activeBold ? FontWeight.bold : FontWeight.normal,
+      fontStyle: _activeItalic ? FontStyle.italic : FontStyle.normal,
+    );
     notifyListeners();
   }
 

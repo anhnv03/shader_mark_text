@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:test_shader_mark_text/extension/dot_style_extension.dart';
 import 'package:test_shader_mark_text/extension/text_run_direction_extension.dart';
 import 'package:test_shader_mark_text/provider/leb_banner_provider.dart';
+import 'package:test_shader_mark_text/utils/size_helper.dart';
 import 'package:test_shader_mark_text/widget/banner_leb/dot_style.dart';
+import 'package:test_shader_mark_text/widget/color_picker_dialog.dart';
 import 'package:test_shader_mark_text/widget/icon_button.dart';
 import 'package:test_shader_mark_text/widget/shader_text/text_run_direction.dart';
 
@@ -30,9 +32,10 @@ class _ControlSectionState extends State<ControlSection> {
     if (context.watch<LebBannerProvider>().isHorizontalView) {
       return const SizedBox.shrink();
     }
-    return Expanded(
+    return Flexible(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 14)
+            .copyWith(bottom: context.paddingBottom),
         child: Column(
           children: [
             const SizedBox(height: 20),
@@ -71,6 +74,67 @@ class _ControlSectionState extends State<ControlSection> {
                         .toString(),
                     onChanged: (value) =>
                         context.read<LebBannerProvider>().updateTextSize(value),
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                const Text("speed animation: "),
+                Expanded(
+                  child: Slider(
+                    value: context
+                        .watch<LebBannerProvider>()
+                        .selectedSpeedAnimation
+                        .toDouble(),
+                    min: 1,
+                    max: 15,
+                    divisions: (15 - 1),
+                    label: context
+                        .watch<LebBannerProvider>()
+                        .selectedSpeedAnimation
+                        .toString(),
+                    onChanged: (value) => context
+                        .read<LebBannerProvider>()
+                        .updateSpeedAnimation(value.round()),
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                const Text("leb size: "),
+                Expanded(
+                  child: Slider(
+                    value: context.watch<LebBannerProvider>().selectedLedSize,
+                    min: 1,
+                    max: 15,
+                    label: context
+                        .watch<LebBannerProvider>()
+                        .selectedLedSize
+                        .toString(),
+                    onChanged: (value) =>
+                        context.read<LebBannerProvider>().updateLebSize(value),
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                const Text("leb spacing: "),
+                Expanded(
+                  child: Slider(
+                    value:
+                        context.watch<LebBannerProvider>().selectedLebSpacing,
+                    min: 0,
+                    max: 3,
+                    label: context
+                        .watch<LebBannerProvider>()
+                        .selectedLebSpacing
+                        .toString(),
+                    onChanged: (value) => context
+                        .read<LebBannerProvider>()
+                        .updateLebSpacing(value),
                   ),
                 )
               ],
@@ -132,10 +196,29 @@ class _ControlSectionState extends State<ControlSection> {
               children: [
                 const Text("font family: "),
                 ElevatedButton(
-                  onPressed: showBottomSheetSelectFontFamily,
+                  onPressed: () => showBottomSheetSelectFontFamily(context),
                   child: Text(
                       context.watch<LebBannerProvider>().selectFontFamily ??
                           "Roboto"),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("leb color: "),
+                ElevatedButton(
+                  onPressed: () => showColorPickerDialog(
+                    context,
+                    title: "leb color",
+                    initialColor:
+                        Provider.of<LebBannerProvider>(context, listen: false)
+                            .selectedLebColor,
+                    onColorSelected: (value) {
+                      context.read<LebBannerProvider>().updateLebColor(value);
+                    },
+                  ),
+                  child: const Text("selected leb color"),
                 ),
               ],
             ),
@@ -167,23 +250,27 @@ class _ControlSectionState extends State<ControlSection> {
     );
   }
 
-  void showBottomSheetSelectFontFamily() {
+  void showBottomSheetSelectFontFamily(BuildContext contextApp) {
     showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return ListView(
-          children: GoogleFonts.asMap().entries.map((e) {
+      context: contextApp,
+      builder: (BuildContext context) {
+        final fontList = GoogleFonts.asMap().keys.toList();
+        return ListView.builder(
+          itemCount: fontList.length,
+          itemBuilder: (context, index) {
+            final fontName = fontList[index];
             return ListTile(
               title: Text(
-                e.key,
-                style: TextStyle(fontFamily: e.key),
+                fontName,
+                style: GoogleFonts.getFont(fontName),
               ),
               onTap: () {
-                context.read<LebBannerProvider>().updateFontFamily(e.key);
+                print(fontName);
+                contextApp.read<LebBannerProvider>().updateFontFamily(fontName);
                 Navigator.pop(context);
               },
             );
-          }).toList(),
+          },
         );
       },
     );

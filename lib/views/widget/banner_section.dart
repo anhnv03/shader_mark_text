@@ -14,7 +14,7 @@ class BannerSection extends StatelessWidget {
       builder: (context, ledBannerProvider, child) {
         final bannerHeight = ledBannerProvider.isHorizontalView
             ? context.height - context.paddingTop
-            : 200.0;
+            : context.width / 2.1;
 
         return Stack(
           children: [
@@ -22,7 +22,7 @@ class BannerSection extends StatelessWidget {
               margin: EdgeInsets.only(top: context.paddingTop),
               width: context.width,
               height: bannerHeight,
-              color: Colors.black,
+              color: ledBannerProvider.selectedBannerBackgroundColor,
               alignment: Alignment.center,
               // decoration: const BoxDecoration(
               //   image: DecorationImage(
@@ -36,7 +36,9 @@ class BannerSection extends StatelessWidget {
                 data: ledBannerProvider.textContent,
                 animationProps: TextAnimationProps(
                   direction: ledBannerProvider.selectedTextRunDirection,
-                  duration: const Duration(seconds: 2),
+                  duration: Duration(
+                    seconds: ledBannerProvider.selectedSpeedAnimation,
+                  ),
                   curve: Curves.linear,
                   repeat: true,
                 ),
@@ -47,9 +49,9 @@ class BannerSection extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 bannerProps: BannerLebProps(
-                  ledSize: 4,
-                  ledSpacing: 0,
-                  ledColor: Colors.red,
+                  ledSize: ledBannerProvider.selectedLedSize,
+                  ledSpacing: ledBannerProvider.selectedLebSpacing,
+                  ledColor: ledBannerProvider.selectedLebColor,
                   backgroundColor: Colors.black,
                   dotStyle: ledBannerProvider.selectedTextShape,
                   width: context.width,
