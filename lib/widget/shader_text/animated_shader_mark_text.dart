@@ -14,7 +14,7 @@ class AnimatedShaderMarkText extends StatefulWidget {
     super.key,
     required this.data,
     this.textProps = const TextProps(),
-    this.bannerProps = const BannerLebProps(),
+    required this.bannerProps,
     this.animationProps = const TextAnimationProps(),
     this.blendMode = BlendMode.srcIn,
   });

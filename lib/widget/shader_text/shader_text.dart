@@ -14,7 +14,7 @@ class ShaderText extends StatefulWidget {
     super.key,
     required this.data,
     this.textProps = const TextProps(),
-    this.bannerProps = const BannerLebProps(),
+    required this.bannerProps,
     this.blendMode = BlendMode.srcIn,
   });
 
@@ -65,8 +65,8 @@ class _ShaderTextState extends State<ShaderText> {
       ledSpacing: widget.bannerProps.ledSpacing,
       ledColor: widget.bannerProps.ledColor,
       backgroundColor: widget.bannerProps.backgroundColor,
-      width: widget.bannerProps.width ?? 400,
-      height: widget.bannerProps.height ?? 200,
+      width: widget.bannerProps.width,
+      height: widget.bannerProps.height,
       dotStyle: widget.bannerProps.dotStyle,
     );
 
@@ -94,21 +94,24 @@ class _ShaderTextState extends State<ShaderText> {
           Matrix4.identity().storage,
         );
       },
-      child: Text(
-        widget.data,
-        style: widget.textProps.style?.copyWith(color: Colors.white) ??
-            const TextStyle(color: Colors.white),
-        strutStyle: widget.textProps.strutStyle,
-        textAlign: widget.textProps.textAlign,
-        textDirection: widget.textProps.textDirection,
-        locale: widget.textProps.locale,
-        softWrap: widget.textProps.softWrap,
-        overflow: widget.textProps.overflow,
-        maxLines: widget.textProps.maxLines,
-        semanticsLabel: widget.textProps.semanticsLabel,
-        textWidthBasis: widget.textProps.textWidthBasis,
-        textHeightBehavior: widget.textProps.textHeightBehavior,
-        selectionColor: widget.textProps.selectionColor,
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Text(
+          widget.data,
+          style: widget.textProps.style?.copyWith(color: Colors.white) ??
+              const TextStyle(color: Colors.white),
+          strutStyle: widget.textProps.strutStyle,
+          textAlign: widget.textProps.textAlign,
+          textDirection: widget.textProps.textDirection,
+          locale: widget.textProps.locale,
+          softWrap: widget.textProps.softWrap,
+          overflow: widget.textProps.overflow,
+          maxLines: widget.textProps.maxLines,
+          semanticsLabel: widget.textProps.semanticsLabel,
+          textWidthBasis: widget.textProps.textWidthBasis,
+          textHeightBehavior: widget.textProps.textHeightBehavior,
+          selectionColor: widget.textProps.selectionColor,
+        ),
       ),
     );
   }

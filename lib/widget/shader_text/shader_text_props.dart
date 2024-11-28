@@ -8,8 +8,8 @@ class BannerLebProps {
   final Color ledColor;
   final Color backgroundColor;
   final DotStyle dotStyle;
-  final double? width;
-  final double? height;
+  final double width;
+  final double height;
 
   const BannerLebProps({
     this.ledSize = 4,
@@ -17,8 +17,8 @@ class BannerLebProps {
     this.ledColor = Colors.blue,
     this.backgroundColor = Colors.transparent,
     this.dotStyle = DotStyle.none,
-    this.width,
-    this.height,
+    required this.width,
+    required this.height,
   });
 
   BannerLebProps copyWith({

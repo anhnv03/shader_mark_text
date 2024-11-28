@@ -94,7 +94,6 @@ class BannerLebPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     if (dotStyle == DotStyle.none) {
-      // Vẽ nét liền cho toàn bộ diện tích
       canvas.drawRect(
         Rect.fromLTWH(0, 0, width, height),
         paint,
@@ -102,41 +101,50 @@ class BannerLebPainter extends CustomPainter {
       return;
     }
 
-    // Vẽ các dot cho các style khác
-    final cols = (width / (ledSize + ledSpacing)).floor();
-    final rows = (height / (ledSize + ledSpacing)).floor();
+    // Tính toán lại số cột và hàng để tận dụng tối đa không gian
+    final unitSize = ledSize + ledSpacing;
+    final cols = (width / unitSize).ceil();
+    final rows = (height / unitSize).ceil();
+
+    // Tính toán lại khoảng cách giữa các LED để phân bố đều
+    final adjustedSpacingX = (width - (cols * ledSize)) / (cols - 1);
+    final adjustedSpacingY = (height - (rows * ledSize)) / (rows - 1);
 
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
-        final x = col * (ledSize + ledSpacing);
-        final y = row * (ledSize + ledSpacing);
+        final x = col * (ledSize + adjustedSpacingX);
+        final y = row * (ledSize + adjustedSpacingY);
         final center = Offset(x + ledSize / 2, y + ledSize / 2);
 
-        switch (dotStyle) {
-          case DotStyle.star:
-            drawStar(canvas, center, ledSize, paint);
-            break;
-          case DotStyle.heart:
-            drawHeart(canvas, center, ledSize, paint);
-            break;
-          case DotStyle.circle:
-            canvas.drawCircle(center, ledSize / 2, paint);
-            break;
-          case DotStyle.square:
-            canvas.drawRect(
-              Rect.fromCenter(
-                center: center,
-                width: ledSize,
-                height: ledSize,
-              ),
-              paint,
-            );
-            break;
-          case DotStyle.diamond:
-            drawDiamond(canvas, center, ledSize, paint);
-            break;
-          case DotStyle.none:
-            break; // Đã xử lý ở trên
+        // Kiểm tra xem LED có nằm trong giới hạn của view không
+        if (center.dx + ledSize / 2 <= width &&
+            center.dy + ledSize / 2 <= height) {
+          switch (dotStyle) {
+            case DotStyle.star:
+              drawStar(canvas, center, ledSize, paint);
+              break;
+            case DotStyle.heart:
+              drawHeart(canvas, center, ledSize, paint);
+              break;
+            case DotStyle.circle:
+              canvas.drawCircle(center, ledSize / 2, paint);
+              break;
+            case DotStyle.square:
+              canvas.drawRect(
+                Rect.fromCenter(
+                  center: center,
+                  width: ledSize,
+                  height: ledSize,
+                ),
+                paint,
+              );
+              break;
+            case DotStyle.diamond:
+              drawDiamond(canvas, center, ledSize, paint);
+              break;
+            case DotStyle.none:
+              break;
+          }
         }
       }
     }
