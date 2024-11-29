@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:screen_recorder/screen_recorder.dart';
@@ -27,54 +28,41 @@ class _BannerSectionState extends State<BannerSection> {
   @override
   void initState() {
     super.initState();
-    _requestManageStoragePermission();
     _startRecording();
   }
 
-  Future<void> _requestManageStoragePermission() async {
-    if (await Permission.manageExternalStorage.request().isGranted) {
-      debugPrint("Storage management permission granted");
-    } else {
-      debugPrint("Storage management permission denied");
-    }
-  }
-
   void _startRecording() async {
+    // Bắt đầu ghi
     _recorderController.start();
-    await Future.delayed(Duration(seconds: 10)); // Ghi trong 5 giây
+    await Future.delayed(Duration(seconds: 5)); // Ghi trong 5 giây
     _recorderController.stop();
 
+    // Xuất ra các frame
     final frames = _recorderController.exporter.frames;
-    final gifBytes = await _generateGif(frames);
 
-    // Lưu file GIF vào thư mục bộ nhớ trong
-    await _saveGifToGallery(gifBytes);
-  }
+    // Tạo encoder GIF
+    final gif = img.GifEncoder();
 
-  Future<List<int>> _generateGif(List<Frame> frames) async {
-    // Giả sử bạn đã mã hóa các frame thành file GIF
-    final gifBytes = <int>[]; // Thực hiện mã hóa ở đây.
-    return gifBytes;
-  }
-
-  Future<void> _saveGifToGallery(List<int> gifBytes) async {
-    final directory = await getExternalStorageDirectory();
-    final path = '${directory!.path}/animated_text.gif';
-
-    final file = File(path);
-    await file.writeAsBytes(gifBytes);
-
-    debugPrint("GIF saved to: $path");
-
-    // Sau khi file được lưu, bạn có thể thêm nó vào thư viện ảnh
-    final galleryDirectory = Directory('/storage/emulated/0/Pictures/');
-    if (await galleryDirectory.exists()) {
-      final galleryPath = '${galleryDirectory.path}/animated_text.gif';
-      await file.copy(galleryPath);
-      debugPrint('GIF saved to gallery at: $galleryPath');
+    for (var frame in frames) {
+      final bytes = await frame.image.toByteData(format: ImageByteFormat.png);
+      final image = img.decodeImage(bytes!.buffer.asUint8List());
+      gif.addFrame(image!);
     }
-  }
 
+    // Lưu file GIF tạm thời trong thư mục ứng dụng
+    final directory = await getApplicationDocumentsDirectory();
+    final gifFile = File('${directory.path}/animated_text.gif');
+
+    await gifFile.writeAsBytes(gif.finish()!);
+
+    // Lưu GIF vào thư viện ảnh
+    final result = await ImageGallerySaver.saveFile(gifFile.path);
+
+    if (result['isSuccess'] == true) {
+      debugPrint('GIF đã lưu thành công: ${result['filePath']}');
+    } else {
+      debugPrint('Không thể lưu GIF vào thư viện.');
+    }}
 
   @override
   Widget build(BuildContext context) {
